@@ -1,0 +1,8 @@
+# 忽略所有文件
+*
+
+# 取消忽略所有 .ael 文件
+!*.ael
+
+# 特别忽略 include.ael
+include.ael

@@ -1,0 +1,73 @@
+/*
+函数名: draw_intersection_Nturns_lower
+功能: 绘制N圈数的交叉结构（下半部分）
+参数: 
+    centerX - 交叉结构的中心X坐标
+    centerY - 交叉结构的中心Y坐标
+    Nturns - 圈数
+    lengthX_chop - 交叉结构X方向长度
+    spacing - 间距
+    pathWidth - 导线宽度
+    wireLayerName - 导线层的名称
+    underLayerName - 底层的名称
+    viaLayerName - 通孔层的名称
+返回值: 无
+*/
+defun draw_intersection_Nturns_lower(centerX, centerY, Nturns, lengthX_chop, spacing, pathWidth, wireLayerName, underLayerName, viaLayerName)
+{    
+    //判断Nturns是奇数还是偶数
+    decl isOdd = Nturns % 2;
+    decl length = spacing + pathWidth;
+    decl i;
+
+    // 获取当前设计上下文
+    decl context = de_get_current_design_context();
+    
+    // 获取指定层的ID和层号
+    decl layerId1 = db_get_layerid(context, wireLayerName, "drawing");
+    decl layerId2 = db_get_layerid(context, underLayerName, "drawing");
+    decl layerNum1 = db_get_layer_number(layerId1);
+    decl layerNum2 = db_get_layer_number(layerId2);
+
+    // 设置导线属性
+    de_set_path_width(pathWidth);  // 设置导线宽度
+    de_set_path_corner(DB_SQUARE_CORNER);  // 设置方形拐角
+ 
+    // 设置当前绘制层
+    de_set_layer(layerNum1);
+
+    // 如果Nturns是奇数
+    if (isOdd)
+    {   
+
+        decl intersection_num = (Nturns - 1) / 2;
+        
+        //绘制交叉结构
+        for (i = 0; i < intersection_num; i++)
+        {
+            draw_intersection(centerX, centerY - i * 2 * length - 0.5 * length, lengthX_chop, spacing, pathWidth, wireLayerName, underLayerName, viaLayerName);
+        }
+    }
+
+    // 如果Nturns是偶数
+    else
+    {   
+        // 绘制直连线   
+        de_add_path();
+
+        de_add_point(centerX - lengthX_chop/2.0, centerY);
+        de_add_point(centerX + lengthX_chop/2.0, centerY);
+
+        de_end();
+
+        //绘制交叉结构
+        decl intersection_num = Nturns / 2;
+
+        for (i = 0; i < intersection_num - 1; i++)
+        {
+            draw_intersection(centerX, centerY - i * 2 * length - 1.5 * length, lengthX_chop, spacing, pathWidth, wireLayerName, underLayerName, viaLayerName);
+        }
+
+    }
+
+}

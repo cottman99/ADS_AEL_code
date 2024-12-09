@@ -1,0 +1,64 @@
+// 绘制单圈八边形平面电感
+defun draw_octagon_inductor_single_ring(centerX, centerY, radius, pathWidth, LayerName)
+{
+    de_select_all();
+	de_delete();
+    // 获取当前设计上下文
+    decl context = de_get_current_design_context();
+    
+    decl layerId = db_get_layerid(context, LayerName, "drawing");
+    // 从 layerId 中获取层号
+    decl layerNum = db_get_layer_number(layerId);
+
+    // 设置导线层
+    de_set_layer(layerNum);  // 假设metal层号为1
+    
+    // 设置path属性
+    de_set_path_width(pathWidth);
+    de_set_path_corner(DB_SQUARE_CORNER);  // 设置圆角
+    
+    // 开始绘制主体八边形path
+    de_add_path();
+
+    decl TW = pathWidth + 20;
+    decl TL = 20;
+    decl angle22p5 = 22.5 * PI/180;
+
+    de_add_point(centerX + radius * cos(angle22p5)+TL, centerY + TW/2.0);
+    de_add_point(centerX + radius * cos(angle22p5), centerY + TW/2.0);
+
+
+    // 计算8个顶点并添加点
+    decl i, angle, x, y;
+    decl startX, startY;
+
+    for(i=0; i<=7; i++)
+    {
+        angle = i * 45 * PI/180 + angle22p5;
+        x = centerX + radius * cos(angle);
+        y = centerY + radius * sin(angle);
+
+        if(i == 0)
+        {
+            startX = x;
+            startY = y;
+        }
+        de_add_point(x, y);
+    }
+
+    de_add_point(centerX + radius * cos(angle22p5), centerY - TW/2.0);
+    de_add_point(centerX + radius * cos(angle22p5)+TL, centerY - TW/2.0);
+    
+    // 结束path绘制
+    de_end();
+    
+    // 添加端口1 (输入端口)
+    decl port1X = startX - pathWidth/2.0;
+    decl port1Y = startY;
+    db_create_pin(context, centerX + radius * cos(angle22p5)+TL, centerY + TW/2.0, 0, layerId, 1, "P1");
+    
+    // 添加端口2 (输出端口)
+    decl port2X = startX + pathWidth/2.0;
+    decl port2Y = startY;
+    db_create_pin(context, centerX + radius * cos(angle22p5)+TL, centerY - TW/2.0, 0, layerId, 2, "P2");
+}

@@ -1,0 +1,32 @@
+/*
+函数名: draw_octagon_Nturns_inner_XY
+功能: 绘制N圈同心八边形图形,从内到外依次增大
+参数:
+    centerX - 八边形中心X坐标
+    centerY - 八边形中心Y坐标
+    Nturns - 八边形的圈数
+    spacing - 相邻八边形之间的间距
+    lengthX - 最内层八边形X方向的长度
+    lengthY - 最内层八边形Y方向的长度
+    cornerK - 八边形拐角系数(0-1),控制八边形拐角的大小
+    pathWidth - 导线宽度
+    LayerName - 绘制所在的层名
+返回值: 无
+注意事项:
+    1. 从内到外依次绘制N个同心八边形
+    2. 每层八边形的尺寸会根据间距和导线宽度逐渐增大
+    3. 所有八边形共用同一个中心点和拐角系数
+*/
+defun draw_octagon_Nturns_inner_XY(centerX, centerY, Nturns, spacing, lengthX, lengthY, cornerK, pathWidth, LayerName)
+{    
+    decl i;
+    
+    for(i=0; i<Nturns; i++)
+    {
+        decl lengthX_iter = lengthX + i * (spacing + pathWidth) * 2.0;
+        decl lengthY_iter = lengthY + i * (spacing + pathWidth) * 2.0;
+        decl cornerK_iter = cornerK;
+
+        draw_octagon_XY(centerX, centerY, lengthX_iter, lengthY_iter, cornerK_iter, pathWidth, LayerName);
+    }
+}

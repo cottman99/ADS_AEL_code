@@ -1,0 +1,91 @@
+/*
+函数名: draw_intersection
+功能: 绘制两层金属线的交叉结构
+参数:
+    centerX - 交叉结构中心X坐标
+    centerY - 交叉结构中心Y坐标
+    lengthX_chop - 交叉结构X方向长度
+    spacing - 交叉处的间距
+    pathWidth - 金属线宽度
+    wireLayerName - 金属线所在的层名
+    underLayerName - 下层金属线所在的层名
+    viaLayerName - 过孔所在的层名
+返回值: 无
+注意事项:
+    1. 两条金属线呈45度角交叉
+    2. 交叉处的尺寸由spacing和pathWidth共同决定
+    3. 两条金属线分别位于不同的金属层
+*/
+defun draw_intersection(centerX, centerY, lengthX_chop, spacing, pathWidth, wireLayerName, underLayerName, viaLayerName)
+{    
+    //计算交叉处边长
+    decl length = spacing + pathWidth;
+
+    // 获取当前设计上下文
+    decl context = de_get_current_design_context();
+    
+    // 获取指定层的ID和层号
+    decl layerId1 = db_get_layerid(context, wireLayerName, "drawing");
+    decl layerId2 = db_get_layerid(context, underLayerName, "drawing");
+    decl layerId3 = db_get_layerid(context, viaLayerName, "drawing");
+    decl layerNum1 = db_get_layer_number(layerId1);
+    decl layerNum2 = db_get_layer_number(layerId2);
+    decl layerNum3 = db_get_layer_number(layerId3);
+
+    // 设置导线属性
+    de_set_path_width(pathWidth);  // 设置导线宽度
+    de_set_path_corner(DB_SQUARE_CORNER);  // 设置方形拐角
+
+    //绘制层1 Path    
+    // 设置当前绘制层
+    de_set_layer(layerNum1);
+
+    // 开始绘制交叉处主体
+    de_add_path();
+
+    // 添加交叉处顶点
+    de_add_point(centerX - (lengthX_chop/2 + pathWidth), centerY - length/2);
+    de_add_point(centerX - length/2, centerY - length/2);
+    de_add_point(centerX + length/2, centerY + length/2);
+    de_add_point(centerX + (lengthX_chop/2 + pathWidth), centerY + length/2);
+
+    // 结束路径绘制
+    de_end();
+
+    //绘制层2 Path    
+    // 设置当前绘制层
+    de_set_layer(layerNum2);
+
+    // 开始绘制交叉处主体
+    de_add_path();
+
+    // 添加交叉处顶点
+    de_add_point(centerX - (lengthX_chop/2.0 + pathWidth), centerY + length/2.0);
+    de_add_point(centerX - length/2.0, centerY + length/2.0);
+    de_add_point(centerX + length/2.0, centerY - length/2.0);
+    de_add_point(centerX + (lengthX_chop/2.0 + pathWidth), centerY - length/2.0);
+
+    // 结束路径绘制
+    de_end();
+
+    //绘制过孔
+    // 设置当前绘制层
+    de_set_layer(layerNum3);
+
+    // 绘制过孔1
+    de_add_path();
+
+    de_add_point(centerX - (lengthX_chop/2.0 + pathWidth), centerY + length/2.0);
+    de_add_point(centerX - lengthX_chop/2.0, centerY + length/2.0);
+
+    de_end();
+
+    // 绘制过孔2
+    de_add_path();
+
+    de_add_point(centerX + lengthX_chop/2.0, centerY - length/2.0);
+    de_add_point(centerX + (lengthX_chop/2.0 + pathWidth), centerY - length/2.0);
+
+    de_end();
+
+}
