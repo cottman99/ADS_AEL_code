@@ -4,5 +4,10 @@
 # 取消忽略所有 .ael 文件
 !*.ael
 
+# 取消忽略 README 和 LICENSE 文件
+!README.md
+!README_CN.md
+!LICENSE
+
 # 特别忽略 include.ael
 include.ael
