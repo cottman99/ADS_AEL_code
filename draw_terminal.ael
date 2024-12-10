@@ -38,10 +38,10 @@ defun draw_terminal(centerX, centerY, width, pathWidth, length, gap, wireLayerNa
     // 添加输入端口(端口1)
     decl port1X = centerX - (gap + width)/2.0;
     decl port1Y = centerY - length;
-    db_create_pin(context, port1X, port1Y, -90, layerId, 1, "P1");
+    db_create_pin(context, port1X, port1Y, -90, layerId);
 
     // 添加输出端口(端口2) 
     decl port2X = centerX + (gap + width)/2.0;
     decl port2Y = centerY - length;
-    db_create_pin(context, port2X, port2Y, -90, layerId, 2, "P2");
+    db_create_pin(context, port2X, port2Y, -90, layerId);
 }

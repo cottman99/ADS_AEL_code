@@ -1,44 +1,24 @@
-defun draw_inductor_multi_ring(centerX, centerY, Nturns, spacing, lengthX, lengthY, cornerK, pathWidth, wireLayerName, underLayerName, viaLayerName, terminalmode, terminalWidth, terminalLength, terminalGap)
-{    
-    //选择并清除
-    de_select_all();
-    de_delete();
+// 创建包裹函数方便定制EM配置,尤其是port参考地配置(参数: 被调用cell名,包裹cell名, 库名)
+defun creat_wrapper_layout( cell_name, wrapper_name, lib_name )
+{
+    decl macroContext = de_get_design_context_from_name(strcat(lib_name, ":", wrapper_name, ":layout"));
+    de_show_context_in_new_window(macroContext);
+    decl itemInfo0LP = de_init_item(strcat(lib_name, ":", cell_name, ":layout"));
+    decl macroContext = de_get_design_context_from_name(strcat(lib_name, ":", cell_name, ":layout"));
+    decl itemDefP = db_get_item_definition(macroContext);
+    decl params_name = dm_item_get_parm_names(itemDefP);
 
-    draw_octagon_Nturns_inner_XY(centerX, centerY, Nturns, spacing, lengthX, lengthY, cornerK, pathWidth, wireLayerName);
+    //
+    decl params_list = list();
+    decl i;
 
-    
-    //选择全部
-    de_select_all();
-
-    decl lengthY_chop = lengthY + (Nturns - 1) * (spacing + pathWidth) * 2.0 + pathWidth;
-    decl lengthX_chop = spacing + 2 * pathWidth;
-    
-    // 使用de_chop创建中空区域（考虑中心点偏移）
-    de_chop(centerX - lengthX_chop/2.0, centerY - lengthY_chop/2.0 + pathWidth,  // 内部区域左下角
-            centerX + lengthX_chop/2.0, centerY + lengthY_chop/2.0);  // 内部区域右上角
-
-    // 绘制交叉结构 上半部分
-    draw_intersection_Nturns_upper(centerX, centerY + lengthY/2.0, Nturns, spacing, pathWidth, wireLayerName, underLayerName, viaLayerName);
-
-    // 绘制交叉结构 下半部分
-    draw_intersection_Nturns_lower(centerX, centerY - lengthY/2.0, Nturns, spacing, pathWidth, wireLayerName, underLayerName, viaLayerName);
-
-    // 绘制终端
-    decl length = spacing + pathWidth;
-    decl new_centerY = centerY - ((Nturns - 1) * length + lengthY/2.0);
-    if (terminalmode == 1)
+    for(i=0;i<listlen(params_name);i++)
     {
-
-        draw_terminal(centerX, new_centerY, terminalWidth, pathWidth, terminalLength, terminalGap, wireLayerName);
+        decl param_value = list(prm_ex(lib_name,"StdForm",params_name[i]));
+        params_list = append(params_list,param_value);
     }
 
-    else
-    {
-        draw_terminal(centerX, new_centerY, pathWidth, pathWidth, terminalLength, length, wireLayerName);
-    }
-
+    de_set_item_parameters(itemInfo0LP, params_list);
+    de_place_item(itemInfo0LP, 0, 0);
 
 }
-
-
-

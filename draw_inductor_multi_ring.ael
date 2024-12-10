@@ -33,8 +33,8 @@ load("draw_terminal.ael");
 defun draw_inductor_multi_ring(centerX, centerY, Nturns, spacing, lengthX, lengthY, cornerK, pathWidth, wireLayerName, underLayerName, viaLayerName, terminalmode, terminalWidth, terminalLength, terminalGap, intersection_spacing_ratio)
 {    
     //选择并清除
-    de_select_all();
-    de_delete();
+    // de_select_all();
+    // de_delete();
 
     draw_octagon_Nturns_inner_XY(centerX, centerY, Nturns, spacing, lengthX, lengthY, cornerK, pathWidth, wireLayerName);
 

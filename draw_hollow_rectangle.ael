@@ -17,9 +17,9 @@
 */
 defun draw_hollow_rectangle(centerX, centerY, innerX, innerY, outerX, outerY, LayerName)
 {
-    //选择并清除
-    de_select_all();
-    de_delete();
+    // //选择并清除
+    // de_select_all();
+    // de_delete();
 
     // 获取当前设计上下文
     decl context = de_get_current_design_context();

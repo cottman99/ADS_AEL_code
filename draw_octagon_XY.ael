@@ -38,19 +38,19 @@ defun draw_octagon_XY(centerX, centerY, lengthX, lengthY, cornerK, pathWidth, La
     de_add_path();
 
     // 按顺序添加12个顶点坐标,构成八边形电感形状
-    de_add_point(lengthX/2.0, centerY);          // 端口1内端点
+    de_add_point(centerX + lengthX/2.0, centerY);          // 端口1内端点
     
     // 八边形的8个顶点
-    de_add_point(lengthX/2.0,  lengthY/2.0 - cornerK * Lengthmin/2.0);
-    de_add_point(lengthX/2.0 - cornerK * Lengthmin/2.0,  lengthY/2.0);
-    de_add_point(-1*(lengthX/2.0 - cornerK * Lengthmin/2.0),  lengthY/2.0);
-    de_add_point(-1*lengthX/2.0,  lengthY/2.0 - cornerK * Lengthmin/2.0);
-    de_add_point(-1*lengthX/2.0,  -1*(lengthY/2.0 - cornerK * Lengthmin/2.0));
-    de_add_point(-1*(lengthX/2.0 - cornerK * Lengthmin/2.0),  -1*lengthY/2.0);
-    de_add_point(lengthX/2.0 - cornerK * Lengthmin/2.0,  -1*lengthY/2.0);
-    de_add_point(lengthX/2,  -1*(lengthY/2 - cornerK * Lengthmin/2.0));
+    de_add_point(centerX + lengthX/2.0,  centerY + lengthY/2.0 - cornerK * Lengthmin/2.0);
+    de_add_point(centerX + lengthX/2.0 - cornerK * Lengthmin/2.0, centerY +  lengthY/2.0);
+    de_add_point(centerX + -1*(lengthX/2.0 - cornerK * Lengthmin/2.0), centerY + lengthY/2.0);
+    de_add_point(centerX + -1*lengthX/2.0, centerY + lengthY/2.0 - cornerK * Lengthmin/2.0);
+    de_add_point(centerX + -1*lengthX/2.0, centerY + -1*(lengthY/2.0 - cornerK * Lengthmin/2.0));
+    de_add_point(centerX + -1*(lengthX/2.0 - cornerK * Lengthmin/2.0), centerY + -1*lengthY/2.0);
+    de_add_point(centerX + lengthX/2.0 - cornerK * Lengthmin/2.0, centerY + -1*lengthY/2.0);
+    de_add_point(centerX + lengthX/2.0, centerY + -1*(lengthY/2 - cornerK * Lengthmin/2.0));
 
-    de_add_point(lengthX/2.0, centerY);          // 端口2内端点
+    de_add_point(centerX + lengthX/2.0, centerY);          // 端口2内端点
     
     // 结束路径绘制
     de_end();
