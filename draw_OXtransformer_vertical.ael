@@ -1,0 +1,148 @@
+/*
+ * 函数名: draw_OXtransformer_vertical
+ * 参数:
+ *  Nturns_Primary_O: 初级绕组的圈数
+ *  Nturns_Secondary_O: 次级绕组的圈数
+ *  spacing_Primary_O: 初级绕组之间的间距
+ *  spacing_Secondary_O: 次级绕组之间的间距
+ *  pathWidth_Primary_O: 初级绕组的路径宽度
+ *  pathWidth_Secondary_O: 次级绕组的路径宽度
+ *  Nturns_Primary_X: 初级绕组的圈数
+ *  Nturns_Secondary_X: 次级绕组的圈数
+ *  spacing_Primary_X: 初级绕组之间的间距
+ *  spacing_Secondary_X: 次级绕组之间的间距
+ *  pathWidth_Primary_X: 初级绕组的路径宽度
+ *  pathWidth_Secondary_X: 次级绕组的路径宽度
+ *  terminalWidth: 终端宽度
+ *  terminalGap: 终端间距
+ *  offsetX: 交叉处的偏移量
+ *  spacing_OX: OX线圈之间的间距
+ *  lengthX: 变压器的X方向长度
+ *  lengthY: 变压器的Y方向长度
+ *  cornerK: 角度系数
+ *  GND_gap: GND层与变压器之间的间距
+ *  wireLayerName_Primary: 初级绕组的线路层名称
+ *  wireLayerName_Secondary: 次级绕组的线路层名称
+ *  underLayerName_Primary: 初级绕组的下层名称
+ *  underLayerName_Secondary: 次级绕组的下层名称
+ *  viaLayerName_Primary: 初级绕组的通孔层名称
+ *  viaLayerName_Secondary: 次级绕组的通孔层名称
+ *  gndLayerName: GND层的名称
+ *  direction: 方向
+ *  terminalLength_offset: 终端长度偏移
+ *  GND_width: GND层的宽度
+ * 
+ * 函数描述: 绘制垂直变压器的结构，包括初级绕组、次级绕组和GND层。
+ */
+defun draw_OXtransformer_vertical( Nturns_Primary_O, Nturns_Secondary_O, spacing_Primary_O, spacing_Secondary_O, pathWidth_Primary_O, pathWidth_Secondary_O, Nturns_Primary_X, Nturns_Secondary_X, spacing_Primary_X, spacing_Secondary_X, pathWidth_Primary_X, pathWidth_Secondary_X, terminalmode, terminalWidth, terminalGap, offsetX, spacing_OX, lengthX, lengthY, cornerK, GND_gap, wireLayerName_Primary, wireLayerName_Secondary, underLayerName_Primary, underLayerName_Secondary, viaLayerName_Primary, viaLayerName_Secondary, gndLayerName, direction , terminalLength_offset , GND_width)
+{    
+    // 选择并清除所有对象
+    de_select_all();
+    de_delete();
+
+    // 计算或定义参数
+    // centerX 和 centerY 定义了变压器的中心坐标
+    decl centerX = 0;
+    decl centerY = 0;
+    // lengthRef_Primary 和 lengthRef_Secondary 计算了初级和次级绕组的参考长度
+    decl lengthRef_Primary_O = pathWidth_Primary_O + spacing_Primary_O;
+    decl lengthRef_Secondary_O = pathWidth_Secondary_O + spacing_Secondary_O;
+    
+
+    // lengthX_Primary, lengthY_Primary, lengthX_Secondary, lengthY_Secondary 计算了初级和次级绕组的实际长度
+    decl lengthX_Primary_O = lengthX - lengthRef_Primary_O * (Nturns_Primary_O - 1);
+    decl lengthY_Primary_O = lengthY - lengthRef_Primary_O * (Nturns_Primary_O - 1);
+    decl lengthX_Secondary_O = lengthX - lengthRef_Secondary_O * (Nturns_Secondary_O - 1);
+    decl lengthY_Secondary_O = lengthY - lengthRef_Secondary_O * (Nturns_Secondary_O - 1);
+
+    // Max_outerX 和 Max_outerY 计算了变压器的最大外部尺寸
+    decl Max_outerX = max2(lengthX + lengthRef_Primary_O * (Nturns_Primary_O - 1) + pathWidth_Primary_O, lengthX + lengthRef_Secondary_O * (Nturns_Secondary_O - 1) + pathWidth_Secondary_O);
+    decl Max_outerY = max2(lengthY + lengthRef_Primary_O * (Nturns_Primary_O - 1) + pathWidth_Primary_O, lengthY + lengthRef_Secondary_O * (Nturns_Secondary_O - 1) + pathWidth_Secondary_O);
+
+    // 计算GND层的参考宽度
+    decl lengthRef_GND_width = GND_width*2;
+
+    // lengthX_innerGND, lengthY_innerGND, lengthX_outerGND, lengthY_outerGND 计算了GND层的内部和外部尺寸
+    decl lengthX_innerGND = Max_outerX + GND_gap;
+    decl lengthY_innerGND = Max_outerY + GND_gap;
+    decl lengthX_outerGND = lengthX_innerGND + lengthRef_GND_width;
+    decl lengthY_outerGND = lengthY_innerGND + lengthRef_GND_width;
+
+    // 计算初级和次级绕组的终端长度
+    decl terminalLength_primary_O = pathWidth_Primary_O/2.0 + terminalLength_offset + (lengthY_innerGND - (lengthY + lengthRef_Primary_O * (Nturns_Primary_O - 1) + pathWidth_Primary_O))/2.0;
+    decl terminalLength_secondary_O = pathWidth_Secondary_O/2.0 + terminalLength_offset + (lengthY_innerGND - (lengthY + lengthRef_Secondary_O * (Nturns_Secondary_O - 1) + pathWidth_Secondary_O))/2.0;
+
+    //terminalO
+    decl terminalmode_O = 1;
+    decl terminalWidth_O = terminalWidth;
+    decl terminalGap_O = terminalGap + 2*spacing_OX + 2 * terminalWidth;
+
+    //绘制hollow GND
+    draw_hollow_rectangle(centerX, centerY, lengthX_innerGND, lengthY_innerGND, lengthX_outerGND, lengthY_outerGND, gndLayerName);
+
+    //绘制八边形初级绕组
+    draw_inductor_multi_ring(centerX + 2* lengthY_outerGND, centerY, Nturns_Primary_O, spacing_Primary_O, lengthX_Primary_O, lengthY_Primary_O, cornerK, pathWidth_Primary_O, wireLayerName_Primary, underLayerName_Primary, viaLayerName_Primary, terminalmode_O, terminalWidth_O, terminalLength_primary_O, terminalGap_O, 2);
+
+    //绘制八边形次级绕组
+    draw_inductor_multi_ring(centerX - 2* lengthY_outerGND, centerY, Nturns_Secondary_O, spacing_Secondary_O, lengthX_Secondary_O, lengthY_Secondary_O, cornerK, pathWidth_Secondary_O, wireLayerName_Secondary, underLayerName_Secondary, viaLayerName_Secondary, terminalmode_O, terminalWidth_O, terminalLength_secondary_O, terminalGap_O, 2);
+
+    // 根据方向进行旋转和移动
+    decl anglelist = {0, 90, 180, 270};
+    decl angle = anglelist[direction];
+
+    // 移动和旋转初级绕组
+    de_select_range(centerX + 2* lengthY_outerGND - lengthY_outerGND/2.0, centerY - lengthY_outerGND/2.0, centerX + 2* lengthY_outerGND + lengthY_outerGND/2.0, centerY + lengthY_outerGND/2.0);
+    de_move(-2* lengthY_outerGND, 0);
+
+    // 移动和旋转次级绕组
+    de_select_range(centerX - 2* lengthY_outerGND - lengthY_outerGND/2.0, centerY - lengthY_outerGND/2.0, centerX - 2* lengthY_outerGND + lengthY_outerGND/2.0, centerY + lengthY_outerGND/2.0);
+    de_rotate(centerX - 2* lengthY_outerGND, centerY, angle);
+    de_move(2* lengthY_outerGND, 0);
+
+    // 取消所有选择
+    de_deselect_all();
+
+    // lengthRef_Primary 和 lengthRef_Secondary 计算了初级和次级绕组的参考长度
+    decl lengthRef_Primary_X = pathWidth_Primary_X + spacing_Primary_X;
+    decl lengthRef_Secondary_X = pathWidth_Secondary_X + spacing_Secondary_X;
+
+    // 最小内圈尺寸
+    decl min_inner_X = min2(lengthX_Primary_O - pathWidth_Primary_O, lengthX_Secondary_O - pathWidth_Secondary_O) - max2(lengthRef_Primary_X, lengthRef_Secondary_X) * (Nturns_Primary_X - 1) - 2*spacing_OX;
+    decl min_inner_Y = min2(lengthY_Primary_O - pathWidth_Primary_O, lengthY_Secondary_O - pathWidth_Secondary_O) - max2(lengthRef_Primary_X, lengthRef_Secondary_X) * (Nturns_Primary_X - 1) - 2*spacing_OX;
+
+    // lengthX_Primary, lengthY_Primary, lengthX_Secondary, lengthY_Secondary 计算了初级和次级绕组的实际长度
+    decl lengthX_Primary_X = min_inner_X - lengthRef_Primary_X * (Nturns_Primary_X - 1);
+    decl lengthY_Primary_X = min_inner_Y - lengthRef_Primary_X * (Nturns_Primary_X - 1);
+    decl lengthX_Secondary_X = min_inner_X - lengthRef_Secondary_X * (Nturns_Secondary_X - 1);
+    decl lengthY_Secondary_X = min_inner_Y - lengthRef_Secondary_X * (Nturns_Secondary_X - 1);
+
+    //terminalX
+    decl terminalmode_X = 1;
+    decl terminalWidth_X = terminalWidth;
+    decl terminalGap_X = terminalGap;
+
+    // 计算初级和次级绕组的终端长度
+    decl terminalLength_primary_X = pathWidth_Primary_X/2.0 + terminalLength_offset + (lengthY_innerGND - (lengthY + lengthRef_Primary_X * (Nturns_Primary_X - 1) + pathWidth_Primary_X))/2.0 + (lengthY - min_inner_Y)/2.0;
+    decl terminalLength_secondary_X = pathWidth_Secondary_X/2.0 + terminalLength_offset + (lengthY_innerGND - (lengthY + lengthRef_Secondary_X * (Nturns_Secondary_X - 1) + pathWidth_Secondary_X))/2.0 + (lengthY - min_inner_Y)/2.0;
+
+    //绘制X型初级绕组
+    draw_Xinductor_multi_ring(centerX + 2* lengthY_outerGND, centerY, Nturns_Primary_X, spacing_Primary_X, offsetX, lengthX_Primary_X, lengthY_Primary_X, cornerK, pathWidth_Primary_X, wireLayerName_Primary, underLayerName_Primary, viaLayerName_Primary, terminalmode_X, terminalWidth_X, terminalLength_primary_X, terminalGap_X, 2);
+
+    //绘制X型次级绕组
+    draw_Xinductor_multi_ring(centerX - 2* lengthY_outerGND, centerY, Nturns_Secondary_X, spacing_Secondary_X, offsetX, lengthX_Secondary_X, lengthY_Secondary_X, cornerK, pathWidth_Secondary_X, wireLayerName_Secondary, underLayerName_Secondary, viaLayerName_Secondary, terminalmode_X, terminalWidth_X, terminalLength_secondary_X, terminalGap_X, 2);
+
+    // 终端跨层逻辑待完善
+    //...
+    // 移动和旋转初级绕组
+    de_select_range(centerX + 2* lengthY_outerGND - lengthY_outerGND/2.0, centerY - lengthY_outerGND/2.0, centerX + 2* lengthY_outerGND + lengthY_outerGND/2.0, centerY + lengthY_outerGND/2.0);
+    de_move(-2* lengthY_outerGND, 0);
+
+    // 移动和旋转次级绕组
+    de_select_range(centerX - 2* lengthY_outerGND - lengthY_outerGND/2.0, centerY - lengthY_outerGND/2.0, centerX - 2* lengthY_outerGND + lengthY_outerGND/2.0, centerY + lengthY_outerGND/2.0);
+    de_rotate(centerX - 2* lengthY_outerGND, centerY, angle);
+    de_move(2* lengthY_outerGND, 0);
+
+    // 取消所有选择
+    de_deselect_all();
+
+}
