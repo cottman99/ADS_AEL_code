@@ -1,0 +1,47 @@
+/*
+函数名: draw_terminal_no_port
+功能: 绘制终端
+参数: 
+    centerX - 终端中心X坐标
+    centerY - 终端中心Y坐标
+    width - 终端宽度
+    pathWidth - 导线宽度
+    length - 终端长度
+    gap - 终端之间的间隙
+    wireLayerName - 绘制层的名称
+返回值: 无
+*/
+defun draw_terminal_no_port(centerX, centerY, width, pathWidth, length, gap, wireLayerName)
+{
+    // 获取当前设计上下文
+    decl context = de_get_current_design_context();
+
+    //选择全部
+    de_select_all();
+
+    decl lengthY_chop = pathWidth;
+    decl lengthX_chop = gap;
+    
+    // 使用de_chop创建中空区域（考虑中心点偏移）
+    de_chop(centerX - lengthX_chop/2.0, centerY - lengthY_chop/2.0,  // 内部区域左下角
+            centerX + lengthX_chop/2.0, centerY + lengthY_chop/2.0);  // 内部区域右上角
+
+    // 设置当前绘制层
+    decl layerId = db_get_layerid(context, wireLayerName, "drawing");
+
+    // 绘制终端1
+    db_add_rectangle(context, layerId, centerX - gap/2.0, centerY - length, centerX - (gap/2.0 + width), centerY + pathWidth/2.0);
+
+    // 绘制终端2
+    db_add_rectangle(context, layerId, centerX + gap/2.0, centerY - length, centerX + (gap/2.0 + width), centerY + pathWidth/2.0);
+
+    // // 添加输入端口(端口1)
+    // decl port1X = centerX - (gap + width)/2.0;
+    // decl port1Y = centerY - length;
+    // db_create_pin(context, port1X, port1Y, -90, layerId);
+
+    // // 添加输出端口(端口2) 
+    // decl port2X = centerX + (gap + width)/2.0;
+    // decl port2Y = centerY - length;
+    // db_create_pin(context, port2X, port2Y, -90, layerId);
+}

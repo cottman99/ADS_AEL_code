@@ -1,0 +1,53 @@
+/*
+函数名: draw_inductor_multi_ring_dual_layer
+功能: 绘制多圈环形电感
+参数: 
+    ifduallayer - 是否绘制双层绕组
+    centerX - 中心X坐标
+    centerY - 中心Y坐标
+    Nturns - 圈数
+    spacing - 间距
+    lengthX - X方向长度
+    lengthY - Y方向长度
+    cornerK - 拐角系数
+    pathWidth - 导线宽度
+    wireLayerName - 导线层名称
+    underLayerName - 底层名称
+    viaLayerName - 通孔层名称
+    terminalmode - 终端模式
+    terminalWidth - 终端宽度
+    terminalLength - 终端长度
+    terminalGap - 终端间隙
+    intersection_spacing_ratio - 交叉结构间距比例
+返回值: 无
+*/
+defun draw_inductor_multi_ring_dual_layer(ifduallayer, centerX, centerY, Nturns, spacing, lengthX, lengthY, cornerK, pathWidth, wireLayerName, underLayerName, viaLayerName, terminalmode, terminalWidth, terminalLength, terminalGap, intersection_spacing_ratio)
+{    
+    
+    draw_inductor_multi_ring_no_port(centerX, centerY, Nturns, spacing, lengthX, lengthY, cornerK, pathWidth, wireLayerName, underLayerName, viaLayerName, terminalmode, terminalWidth, terminalLength, terminalGap, intersection_spacing_ratio);
+
+    if (ifduallayer == 1)
+    {
+        decl offsetY = lengthY + (Nturns - 1) * (spacing + pathWidth) * 2.0 + pathWidth + terminalLength * 2.0;
+        decl offsetX = lengthX + (Nturns - 1) * (spacing + pathWidth) * 2.0 + pathWidth + terminalLength * 2.0;
+
+        // 绘制via层绕组
+        draw_inductor_multi_ring_via(centerX + offsetX, centerY, Nturns, spacing, lengthX, lengthY, cornerK, pathWidth, viaLayerName, underLayerName, viaLayerName, terminalmode, terminalWidth, terminalLength, terminalGap, intersection_spacing_ratio);
+
+        // 镜像绕组
+        de_select_range(centerX + offsetX - offsetX/2, centerY - offsetY/2, centerX + offsetX + offsetX/2, centerY + offsetY/2);
+        de_move(-offsetX, 0);
+        //de_mirror_y(centerX, centerY); 
+
+        // 绘制under层绕组
+        draw_inductor_multi_ring(centerX + offsetX, centerY, Nturns, spacing, lengthX, lengthY, cornerK, pathWidth, underLayerName, wireLayerName, viaLayerName, terminalmode, terminalWidth, terminalLength, terminalGap, intersection_spacing_ratio);
+
+        // 镜像绕组
+        de_select_range(centerX + offsetX - offsetX/2, centerY - offsetY/2, centerX + offsetX + offsetX/2, centerY + offsetY/2);
+        de_move(-offsetX, 0);
+        de_mirror_y(centerX, centerY); 
+    }
+
+}
+
+

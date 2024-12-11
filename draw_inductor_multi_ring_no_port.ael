@@ -1,0 +1,75 @@
+/*
+函数名: draw_inductor_multi_ring_no_port
+功能: 绘制多圈环形电感
+参数: 
+    centerX - 中心X坐标
+    centerY - 中心Y坐标
+    Nturns - 圈数
+    spacing - 间距
+    lengthX - X方向长度
+    lengthY - Y方向长度
+    cornerK - 拐角系数
+    pathWidth - 导线宽度
+    wireLayerName - 导线层名称
+    underLayerName - 底层名称
+    viaLayerName - 通孔层名称
+    terminalmode - 终端模式
+    terminalWidth - 终端宽度
+    terminalLength - 终端长度
+    terminalGap - 终端间隙
+    intersection_spacing_ratio - 交叉结构间距比例
+返回值: 无
+
+load("draw_octagon_inductor_single_ring.ael");
+load("draw_octagon_inductor_single_ring_XY.ael");
+load("draw_hollow_rectangle.ael");
+load("draw_octagon_XY.ael");
+load("draw_octagon_Nturns_inner_XY.ael");
+load("draw_intersection.ael");
+load("draw_intersection_Nturns_upper.ael");
+load("draw_intersection_Nturns_lower.ael");
+load("draw_terminal.ael");
+*/
+defun draw_inductor_multi_ring_no_port(centerX, centerY, Nturns, spacing, lengthX, lengthY, cornerK, pathWidth, wireLayerName, underLayerName, viaLayerName, terminalmode, terminalWidth, terminalLength, terminalGap, intersection_spacing_ratio)
+{    
+    //选择并清除
+    // de_select_all();
+    // de_delete();
+
+    draw_octagon_Nturns_inner_XY(centerX, centerY, Nturns, spacing, lengthX, lengthY, cornerK, pathWidth, wireLayerName);
+
+    
+    //选择全部
+    de_select_all();
+
+    decl lengthY_chop = lengthY + (Nturns - 1) * (spacing + pathWidth) * 2.0 + pathWidth;
+    decl lengthX_chop = spacing + (1 + intersection_spacing_ratio) * pathWidth;
+    
+    // 使用de_chop创建中空区域（考虑中心点偏移）
+    de_chop(centerX - lengthX_chop/2.0, centerY - lengthY_chop/2.0 + pathWidth,  // 内部区域左下角
+            centerX + lengthX_chop/2.0, centerY + lengthY_chop/2.0);  // 内部区域右上角
+
+    // 绘制交叉结构 上半部分
+    draw_intersection_Nturns_upper(centerX, centerY + lengthY/2.0, Nturns, lengthX_chop, spacing, pathWidth, wireLayerName, underLayerName, viaLayerName);
+
+    // 绘制交叉结构 下半部分
+    draw_intersection_Nturns_lower(centerX, centerY - lengthY/2.0, Nturns, lengthX_chop, spacing, pathWidth, wireLayerName, underLayerName, viaLayerName);
+
+    // 绘制终端
+    decl length = spacing + pathWidth;
+    decl new_centerY = centerY - ((Nturns - 1) * length + lengthY/2.0);
+    if (terminalmode == 1)
+    {
+
+        draw_terminal_no_port(centerX, new_centerY, terminalWidth, pathWidth, terminalLength, terminalGap, wireLayerName);
+    }
+
+    else
+    {
+        draw_terminal_no_port(centerX, new_centerY, pathWidth, pathWidth, terminalLength, length, wireLayerName);
+    }
+
+
+}
+
+
