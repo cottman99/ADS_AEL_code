@@ -20,15 +20,6 @@
     intersection_spacing_ratio - 交叉结构间距比例
 返回值: 无
 
-load("draw_octagon_inductor_single_ring.ael");
-load("draw_octagon_inductor_single_ring_XY.ael");
-load("draw_hollow_rectangle.ael");
-load("draw_octagon_XY.ael");
-load("draw_octagon_Nturns_inner_XY.ael");
-load("draw_intersection.ael");
-load("draw_intersection_Nturns_upper.ael");
-load("draw_intersection_Nturns_lower.ael");
-load("draw_terminal.ael");
 */
 defun draw_inductor_multi_ring_no_port(centerX, centerY, Nturns, spacing, lengthX, lengthY, cornerK, pathWidth, wireLayerName, underLayerName, viaLayerName, terminalmode, terminalWidth, terminalLength, terminalGap, intersection_spacing_ratio)
 {    

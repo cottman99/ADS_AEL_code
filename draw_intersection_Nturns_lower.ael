@@ -16,7 +16,7 @@
 defun draw_intersection_Nturns_lower(centerX, centerY, Nturns, lengthX_chop, spacing, pathWidth, wireLayerName, underLayerName, viaLayerName)
 {    
     //判断Nturns是奇数还是偶数
-    decl isOdd = Nturns % 2;
+    decl isOdd = int(Nturns) % 2;
     decl length = spacing + pathWidth;
     decl i;
 

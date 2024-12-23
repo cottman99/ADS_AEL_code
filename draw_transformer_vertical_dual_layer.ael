@@ -68,7 +68,7 @@ defun draw_transformer_vertical_dual_layer( ifduallayer_Primary, ifduallayer_Sec
     decl terminalLength_secondary = pathWidth_Secondary/2.0 + terminalLength_offset + (lengthY_innerGND - (lengthY + lengthRef_Secondary * (Nturns_Secondary - 1) + pathWidth_Secondary))/2.0;
 
     //绘制hollow GND
-    draw_hollow_rectangle(centerX, centerY, lengthX_innerGND, lengthY_innerGND, lengthX_outerGND, lengthY_outerGND, gndLayerName);
+    draw_hollow_rectangle_multilayer(centerX, centerY, lengthX_innerGND, lengthY_innerGND, lengthX_outerGND, lengthY_outerGND, gndLayerName);
 
     //绘制初级绕组
     draw_inductor_multi_ring_dual_layer(ifduallayer_Primary,centerX + 2* lengthY_outerGND, centerY, Nturns_Primary, spacing_Primary, lengthX_Primary, lengthY_Primary, cornerK, pathWidth_Primary, wireLayerName_Primary, underLayerName_Primary, viaLayerName_Primary, terminalmode, terminalWidth, terminalLength_primary, terminalGap, 2);

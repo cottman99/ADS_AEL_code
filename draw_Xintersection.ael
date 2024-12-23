@@ -11,6 +11,7 @@
     wireLayerName - 金属线所在的层名
     underLayerName - 下层金属线所在的层名
     viaLayerName - 过孔所在的层名
+    via_length_k - 过孔长度系数
 返回值: 无
 注意事项:
     1. 两条金属线呈45度角交叉
@@ -19,8 +20,8 @@
     4. 本函数会根据输入参数计算交叉结构的尺寸，并绘制交叉结构
     5. 交叉结构的绘制包括上层和下层金属线的绘制，以及过孔的绘制
 */
-defun draw_Xintersection(centerX, centerY, Nturns, spacing, pathWidth, offsetX, wireLayerName, underLayerName, viaLayerName)
-{    
+defun draw_Xintersection(centerX, centerY, Nturns, spacing, pathWidth, offsetX, wireLayerName, underLayerName, viaLayerName, via_length_k)
+{   
 
     // 获取当前设计上下文
     decl context = de_get_current_design_context();
@@ -43,7 +44,7 @@ defun draw_Xintersection(centerX, centerY, Nturns, spacing, pathWidth, offsetX, 
 
     decl lengthInner = (Nturns) * spacingY + offsetX;
     
-    decl via_length = 2 * spacingX;
+    decl via_length = via_length_k * spacingX;
     decl lengthOuter = lengthInner + via_length * 2.0 + pathWidth * 2.0;
 
     decl i = 0;

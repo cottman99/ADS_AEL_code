@@ -1,0 +1,43 @@
+/*
+函数名: draw_hollow_rectangle_multilayer
+功能: 在指定图层上绘制一个中空矩形
+参数: 
+    centerX - 中空矩形的中心X坐标
+    centerY - 中空矩形的中心Y坐标  
+    innerX - 内部空心矩形的X方向长度
+    innerY - 内部空心矩形的Y方向长度
+    outerX - 外部矩形的X方向长度
+    outerY - 外部矩形的Y方向长度
+    LayerName - 绘制图层的列表(字符串格式, 例如: "layer1,layer2,layer3")
+返回值: 无
+注意事项:
+    1. 函数会先清除当前选中的所有图形
+    2. 通过先画外部矩形,再在内部挖空的方式实现中空效果
+    3. 所有尺寸参数需要考虑中心点偏移
+*/
+defun draw_hollow_rectangle_multilayer(centerX, centerY, innerX, innerY, outerX, outerY, LayerName)
+{
+    // 获取当前设计上下文
+    decl context = de_get_current_design_context();
+    // 将LayerName字符串转换为列表
+    decl layerNames = parse(LayerName, " ", NULL, TRUE);
+    decl i = 0;
+    // 遍历每个图层
+    for (i = 0; i < listlen(layerNames); i++)
+    {
+        // 获取要使用的图层ID
+        decl layerId = db_get_layerid(context, layerNames[i], "drawing");
+        
+        // 绘制外部矩形（考虑中心点偏移）
+        db_add_rectangle(context, layerId, 
+                        centerX - outerX/2.0, centerY - outerY/2.0,  // 左下角坐标
+                        centerX + outerX/2.0, centerY + outerY/2.0);  // 右上角坐标
+    }
+
+    //选择全部
+    de_select_all();
+    
+    // 使用de_chop创建中空区域（考虑中心点偏移）
+    de_chop(centerX - innerX/2.0, centerY - innerY/2.0,  // 内部区域左下角
+            centerX + innerX/2.0, centerY + innerY/2.0);  // 内部区域右上角
+}

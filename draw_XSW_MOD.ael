@@ -52,11 +52,10 @@ defun draw_XSW_MOD( Nturns_Top, Nturns_Mid, Nturns_Bot, spacing_Top, spacing_Mid
     
 
     // lengthX_Top, lengthY_Top, lengthX_Mid, lengthY_Mid, lengthX_Bot, lengthY_Bot 计算了初级和次级绕组的实际长度
-    decl delta_Mid = max2(pathwidth_Top, pathwidth_Bot);
     decl lengthX_Top = lengthX - lengthRef_Top * (Nturns_Top - 1);
     decl lengthY_Top = lengthY - lengthRef_Top * (Nturns_Top - 1);
-    decl lengthX_Mid = lengthX - lengthRef_Mid * (Nturns_Mid - 1) + 2 * delta_Mid;
-    decl lengthY_Mid = lengthY - lengthRef_Mid * (Nturns_Mid - 1) + 2 * delta_Mid;
+    decl lengthX_Mid = lengthX - lengthRef_Mid * (Nturns_Mid - 1);
+    decl lengthY_Mid = lengthY - lengthRef_Mid * (Nturns_Mid - 1);
     decl lengthX_Bot = lengthX - lengthRef_Bot * (Nturns_Bot - 1);
     decl lengthY_Bot = lengthY - lengthRef_Bot * (Nturns_Bot - 1);
 

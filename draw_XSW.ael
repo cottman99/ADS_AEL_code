@@ -1,5 +1,5 @@
 /*
- * 函数名: draw_XSW_MOD
+ * 函数名: draw_XSW
  * 参数:
  *  Nturns_Top: 初级绕组的圈数
  *  Nturns_Mid: 初级绕组的圈数
@@ -31,10 +31,10 @@
  *  direction: 方向
  *  terminalLength_offset: 终端长度偏移
  *  GND_width: GND层的宽度
- *  via_length_k: 过孔长度系数
+ * 
  * 函数描述: 绘制垂直变压器的结构，包括初级绕组、次级绕组和GND层。
  */
-defun draw_XSW_MOD( Nturns_Top, Nturns_Mid, Nturns_Bot, spacing_Top, spacing_Mid, spacing_Bot, pathWidth_Top, pathWidth_Mid, pathWidth_Bot, offsetX, lengthX, lengthY, cornerK, GND_gap, terminalmode, terminalWidth, terminalGap, wireLayerName_Top, wireLayerName_Mid, wireLayerName_Bot, underLayerName_Top, underLayerName_Mid, underLayerName_Bot, viaLayerName_Top, viaLayerName_Mid, viaLayerName_Bot, gndLayerName, direction , terminalLength_offset , GND_width, via_length_k)
+defun draw_XSW( Nturns_Top, Nturns_Mid, Nturns_Bot, spacing_Top, spacing_Mid, spacing_Bot, pathWidth_Top, pathWidth_Mid, pathWidth_Bot, offsetX, lengthX, lengthY, cornerK, GND_gap, terminalmode, terminalWidth, terminalGap, wireLayerName_Top, wireLayerName_Mid, wireLayerName_Bot, underLayerName_Top, underLayerName_Mid, underLayerName_Bot, viaLayerName_Top, viaLayerName_Mid, viaLayerName_Bot, gndLayerName, direction , terminalLength_offset , GND_width)
 {    
     // 选择并清除所有对象
     de_select_all();
@@ -52,11 +52,10 @@ defun draw_XSW_MOD( Nturns_Top, Nturns_Mid, Nturns_Bot, spacing_Top, spacing_Mid
     
 
     // lengthX_Top, lengthY_Top, lengthX_Mid, lengthY_Mid, lengthX_Bot, lengthY_Bot 计算了初级和次级绕组的实际长度
-    decl delta_Mid = max2(pathwidth_Top, pathwidth_Bot);
     decl lengthX_Top = lengthX - lengthRef_Top * (Nturns_Top - 1);
     decl lengthY_Top = lengthY - lengthRef_Top * (Nturns_Top - 1);
-    decl lengthX_Mid = lengthX - lengthRef_Mid * (Nturns_Mid - 1) + 2 * delta_Mid;
-    decl lengthY_Mid = lengthY - lengthRef_Mid * (Nturns_Mid - 1) + 2 * delta_Mid;
+    decl lengthX_Mid = lengthX - lengthRef_Mid * (Nturns_Mid - 1);
+    decl lengthY_Mid = lengthY - lengthRef_Mid * (Nturns_Mid - 1);
     decl lengthX_Bot = lengthX - lengthRef_Bot * (Nturns_Bot - 1);
     decl lengthY_Bot = lengthY - lengthRef_Bot * (Nturns_Bot - 1);
 
@@ -73,7 +72,7 @@ defun draw_XSW_MOD( Nturns_Top, Nturns_Mid, Nturns_Bot, spacing_Top, spacing_Mid
     decl lengthX_outerGND = lengthX_innerGND + lengthRef_GND_width;
     decl lengthY_outerGND = lengthY_innerGND + lengthRef_GND_width;
 
-    // 计算顶层 中间和底层绕组的终端长度
+    // 计算初级和次级绕组的终端长度
     decl terminalLength_Top = pathWidth_Top/2.0 + terminalLength_offset + (lengthY_innerGND - (lengthY + lengthRef_Top * (Nturns_Top - 1) + pathWidth_Top))/2.0;
     decl terminalLength_Mid = pathWidth_Mid/2.0 + terminalLength_offset + (lengthY_innerGND - (lengthY + lengthRef_Mid * (Nturns_Mid - 1) + pathWidth_Mid))/2.0;
     decl terminalLength_Bot = pathWidth_Bot/2.0 + terminalLength_offset + (lengthY_innerGND - (lengthY + lengthRef_Bot * (Nturns_Bot - 1) + pathWidth_Bot))/2.0;
@@ -81,30 +80,28 @@ defun draw_XSW_MOD( Nturns_Top, Nturns_Mid, Nturns_Bot, spacing_Top, spacing_Mid
     //绘制hollow GND
     draw_hollow_rectangle_multilayer(centerX, centerY, lengthX_innerGND, lengthY_innerGND, lengthX_outerGND, lengthY_outerGND, gndLayerName);
 
-    //绘制中间绕组
-    decl via_add_length = (via_length_k + 1) * pathWidth_Top;
-    draw_Xinductor_multi_ring_no_Xintersection(centerX + 2* lengthY_outerGND, centerY, Nturns_Mid, spacing_Mid, offsetX, lengthX_Mid, lengthY_Mid, cornerK, pathWidth_Mid, pathWidth_Top, wireLayerName_Mid, underLayerName_Mid, viaLayerName_Mid, terminalmode, terminalWidth, terminalLength_Mid, terminalGap, 2, via_add_length);
+    //绘制初级绕组
+    draw_Xinductor_multi_ring_no_Xintersection(centerX + 2* lengthY_outerGND, centerY, Nturns_Mid, spacing_Mid, offsetX, lengthX_Mid, lengthY_Mid, cornerK, pathWidth_Mid, pathWidth_Bot, wireLayerName_Mid, underLayerName_Mid, viaLayerName_Mid, terminalmode, terminalWidth, terminalLength_Mid, terminalGap, 2, 0);
 
-    //绘制底层绕组
-    draw_inductor_multi_ring(centerX - 2* lengthY_outerGND, centerY, Nturns_Bot, spacing_Bot, lengthX_Bot, lengthY_Bot, cornerK, pathWidth_Bot, wireLayerName_Bot, underLayerName_Bot, viaLayerName_Bot, terminalmode, terminalWidth, terminalLength_Bot, terminalGap, 2);
+    //绘制次级绕组
+    draw_Xinductor_multi_ring(centerX - 2* lengthY_outerGND, centerY, Nturns_Bot, spacing_Bot, offsetX, lengthX_Bot, lengthY_Bot, cornerK, pathWidth_Bot, wireLayerName_Bot, underLayerName_Bot, viaLayerName_Bot, terminalmode, terminalWidth, terminalLength_Bot, terminalGap, 2,2);
 
     // 根据方向进行旋转和移动
     decl anglelist = {0, 90, 180, 270};
     decl angle = anglelist[direction];
 
-    // 移动和旋转中间绕组
+    // 移动和旋转初级绕组
     de_select_range(centerX + 2* lengthY_outerGND - lengthY_outerGND/2.0, centerY - lengthY_outerGND/2.0, centerX + 2* lengthY_outerGND + lengthY_outerGND/2.0, centerY + lengthY_outerGND/2.0);
     de_move(-2* lengthY_outerGND, 0);
 
-    // 移动和旋转底层绕组
+    // 移动和旋转次级绕组
     de_select_range(centerX - 2* lengthY_outerGND - lengthY_outerGND/2.0, centerY - lengthY_outerGND/2.0, centerX - 2* lengthY_outerGND + lengthY_outerGND/2.0, centerY + lengthY_outerGND/2.0);
     de_rotate(centerX - 2* lengthY_outerGND, centerY, angle);
     de_move(2* lengthY_outerGND, 0);
 
-    //绘制顶层绕组
-    draw_Xinductor_multi_ring(centerX - 2* lengthY_outerGND, centerY, Nturns_Top, spacing_Top, offsetX, lengthX_Top, lengthY_Top, cornerK, pathWidth_Top, wireLayerName_Top, underLayerName_Top, viaLayerName_Top, terminalmode, terminalWidth, terminalLength_Top, terminalGap, 2,via_length_k);
+    draw_inductor_multi_ring(centerX - 2* lengthY_outerGND, centerY, Nturns_Top, spacing_Top, lengthX_Top, lengthY_Top, cornerK, pathWidth_Top, wireLayerName_Top, underLayerName_Top, viaLayerName_Top, terminalmode, terminalWidth, terminalLength_Top, terminalGap, 2);
 
-     // 移动和旋转顶层绕组
+     // 移动和旋转次级绕组
     de_select_range(centerX - 2* lengthY_outerGND - lengthY_outerGND/2.0, centerY - lengthY_outerGND/2.0, centerX - 2* lengthY_outerGND + lengthY_outerGND/2.0, centerY + lengthY_outerGND/2.0);
     de_rotate(centerX - 2* lengthY_outerGND, centerY, angle);
     de_move(2* lengthY_outerGND, 0);

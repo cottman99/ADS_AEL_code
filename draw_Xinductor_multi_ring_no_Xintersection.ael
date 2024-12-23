@@ -1,5 +1,5 @@
 /*
-函数名: draw_Xinductor_multi_ring
+函数名: draw_Xinductor_multi_ring_no_Xintersection
 功能: 绘制多圈环形电感
 参数: 
     centerX - 中心X坐标
@@ -11,6 +11,7 @@
     lengthY - Y方向长度
     cornerK - 拐角系数
     pathWidth - 导线宽度
+    pathWidth_under - 下层导线宽度
     wireLayerName - 导线层名称
     underLayerName - 底层名称
     viaLayerName - 通孔层名称
@@ -19,10 +20,10 @@
     terminalLength - 终端长度
     terminalGap - 终端间隙
     intersection_spacing_ratio - 交叉结构间距比例
-    via_length_k - 过孔长度系数
+    via_add_length - 过孔附加长度
 返回值: 无
 */
-defun draw_Xinductor_multi_ring(centerX, centerY, Nturns, spacing, offsetX, lengthX, lengthY, cornerK, pathWidth, wireLayerName, underLayerName, viaLayerName, terminalmode, terminalWidth, terminalLength, terminalGap, intersection_spacing_ratio, via_length_k)
+defun draw_Xinductor_multi_ring_no_Xintersection(centerX, centerY, Nturns, spacing, offsetX, lengthX, lengthY, cornerK, pathWidth, pathWidth_under, wireLayerName, underLayerName, viaLayerName, terminalmode, terminalWidth, terminalLength, terminalGap, intersection_spacing_ratio, via_add_length)
 {    
     //选择并清除
     // de_select_all();
@@ -117,7 +118,7 @@ defun draw_Xinductor_multi_ring(centerX, centerY, Nturns, spacing, offsetX, leng
 
     }
 
-    draw_Xintersection(centerX, centerY, Nturns, spacing, pathWidth, offsetX, wireLayerName, underLayerName, viaLayerName, via_length_k);
+    draw_Xintersection_chop_port(centerX, centerY, Nturns, spacing, pathWidth, pathWidth_under, offsetX, wireLayerName, underLayerName, viaLayerName, via_add_length);
     
 
 

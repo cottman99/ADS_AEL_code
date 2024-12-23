@@ -78,7 +78,7 @@ defun draw_OXtransformer_vertical( Nturns_Primary_O, Nturns_Secondary_O, spacing
     decl terminalGap_O = terminalGap + 2*spacing_OX + 2 * terminalWidth;
 
     //绘制hollow GND
-    draw_hollow_rectangle(centerX, centerY, lengthX_innerGND, lengthY_innerGND, lengthX_outerGND, lengthY_outerGND, gndLayerName);
+    draw_hollow_rectangle_multilayer(centerX, centerY, lengthX_innerGND, lengthY_innerGND, lengthX_outerGND, lengthY_outerGND, gndLayerName);
 
     //绘制八边形初级绕组
     draw_inductor_multi_ring(centerX + 2* lengthY_outerGND, centerY, Nturns_Primary_O, spacing_Primary_O, lengthX_Primary_O, lengthY_Primary_O, cornerK, pathWidth_Primary_O, wireLayerName_Primary, underLayerName_Primary, viaLayerName_Primary, terminalmode_O, terminalWidth_O, terminalLength_primary_O, terminalGap_O, 2);
@@ -107,8 +107,8 @@ defun draw_OXtransformer_vertical( Nturns_Primary_O, Nturns_Secondary_O, spacing
     decl lengthRef_Secondary_X = pathWidth_Secondary_X + spacing_Secondary_X;
 
     // 最小内圈尺寸
-    decl min_inner_X = min2(lengthX_Primary_O - pathWidth_Primary_O, lengthX_Secondary_O - pathWidth_Secondary_O) - max2(lengthRef_Primary_X, lengthRef_Secondary_X) * (Nturns_Primary_X - 1) - 2*spacing_OX;
-    decl min_inner_Y = min2(lengthY_Primary_O - pathWidth_Primary_O, lengthY_Secondary_O - pathWidth_Secondary_O) - max2(lengthRef_Primary_X, lengthRef_Secondary_X) * (Nturns_Primary_X - 1) - 2*spacing_OX;
+    decl min_inner_X = min2(lengthX_Primary_O - pathWidth_Primary_O, lengthX_Secondary_O - pathWidth_Secondary_O) - max2(lengthRef_Primary_X * (Nturns_Primary_X - 1) + 2*spacing_OX + pathWidth_Primary_X, lengthRef_Secondary_X * (Nturns_Secondary_X - 1) + 2*spacing_OX + pathWidth_Secondary_X);
+    decl min_inner_Y = min2(lengthY_Primary_O - pathWidth_Primary_O, lengthY_Secondary_O - pathWidth_Secondary_O) - max2(lengthRef_Primary_X * (Nturns_Primary_X - 1) + 2*spacing_OX + pathWidth_Primary_X, lengthRef_Secondary_X * (Nturns_Secondary_X - 1) + 2*spacing_OX + pathWidth_Secondary_X);
 
     // lengthX_Primary, lengthY_Primary, lengthX_Secondary, lengthY_Secondary 计算了初级和次级绕组的实际长度
     decl lengthX_Primary_X = min_inner_X - lengthRef_Primary_X * (Nturns_Primary_X - 1);
@@ -126,10 +126,10 @@ defun draw_OXtransformer_vertical( Nturns_Primary_O, Nturns_Secondary_O, spacing
     decl terminalLength_secondary_X = pathWidth_Secondary_X/2.0 + terminalLength_offset + (lengthY_innerGND - (lengthY + lengthRef_Secondary_X * (Nturns_Secondary_X - 1) + pathWidth_Secondary_X))/2.0 + (lengthY - min_inner_Y)/2.0;
 
     //绘制X型初级绕组
-    draw_Xinductor_multi_ring(centerX + 2* lengthY_outerGND, centerY, Nturns_Primary_X, spacing_Primary_X, offsetX, lengthX_Primary_X, lengthY_Primary_X, cornerK, pathWidth_Primary_X, wireLayerName_Primary, underLayerName_Primary, viaLayerName_Primary, terminalmode_X, terminalWidth_X, terminalLength_primary_X, terminalGap_X, 2);
+    draw_Xinductor_multi_ring(centerX + 2* lengthY_outerGND, centerY, Nturns_Primary_X, spacing_Primary_X, offsetX, lengthX_Primary_X, lengthY_Primary_X, cornerK, pathWidth_Primary_X, wireLayerName_Primary, underLayerName_Primary, viaLayerName_Primary, terminalmode_X, terminalWidth_X, terminalLength_primary_X, terminalGap_X, 2,2);
 
     //绘制X型次级绕组
-    draw_Xinductor_multi_ring(centerX - 2* lengthY_outerGND, centerY, Nturns_Secondary_X, spacing_Secondary_X, offsetX, lengthX_Secondary_X, lengthY_Secondary_X, cornerK, pathWidth_Secondary_X, wireLayerName_Secondary, underLayerName_Secondary, viaLayerName_Secondary, terminalmode_X, terminalWidth_X, terminalLength_secondary_X, terminalGap_X, 2);
+    draw_Xinductor_multi_ring(centerX - 2* lengthY_outerGND, centerY, Nturns_Secondary_X, spacing_Secondary_X, offsetX, lengthX_Secondary_X, lengthY_Secondary_X, cornerK, pathWidth_Secondary_X, wireLayerName_Secondary, underLayerName_Secondary, viaLayerName_Secondary, terminalmode_X, terminalWidth_X, terminalLength_secondary_X, terminalGap_X, 2,2);
 
     // 终端跨层逻辑待完善
     //...
