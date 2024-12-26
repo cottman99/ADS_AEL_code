@@ -3,6 +3,7 @@
 
 # 取消忽略所有 .ael 文件
 !*.ael
+!eesof_lib.cfg
 
 # 取消忽略 README 和 LICENSE 文件
 !README.md
